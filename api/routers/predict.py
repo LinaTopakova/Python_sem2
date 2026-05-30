@@ -9,7 +9,7 @@ router = APIRouter(tags=["predict"])
 
 class PredictRequest(BaseModel):
     image_base64: str
-    user_id: int = 1
+    user_id: int = 1  # временно, пока нет JWT-авторизации
 
 
 class PredictResponse(BaseModel):
@@ -18,10 +18,11 @@ class PredictResponse(BaseModel):
     protein: float
     fat: float
     carbs: float
+    confidence: float
 
 
 @router.post("/predict", response_model=PredictResponse)
-async def predict(
+async def predict(  # type: ignore[misc]
     request: PredictRequest,
     service: PredictionService = Depends(get_prediction_service),
 ) -> PredictResponse:
@@ -32,4 +33,5 @@ async def predict(
         protein=pred.protein,
         fat=pred.fat,
         carbs=pred.carbs,
+        confidence=pred.confidence,
     )

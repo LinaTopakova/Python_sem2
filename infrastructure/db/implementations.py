@@ -22,7 +22,9 @@ class UserRepositoryImpl(UserRepository):
         )
 
     async def get_by_username(self, username: str) -> User | None:
-        result = await self.session.execute(select(UserModel).where(UserModel.username == username))
+        result = await self.session.execute(
+            select(UserModel).where(UserModel.username == username)
+        )
         row = result.scalar_one_or_none()
         if row:
             return User(
@@ -58,6 +60,7 @@ class PredictionRepositoryImpl(PredictionRepository):
             protein=prediction.protein,
             fat=prediction.fat,
             carbs=prediction.carbs,
+            confidence=prediction.confidence,
         )
         self.session.add(db_pred)
         await self.session.commit()
@@ -71,6 +74,7 @@ class PredictionRepositoryImpl(PredictionRepository):
             protein=db_pred.protein,
             fat=db_pred.fat,
             carbs=db_pred.carbs,
+            confidence=db_pred.confidence,
             created_at=db_pred.created_at,
         )
 
@@ -89,6 +93,7 @@ class PredictionRepositoryImpl(PredictionRepository):
                 protein=r.protein,
                 fat=r.fat,
                 carbs=r.carbs,
+                confidence=r.confidence,
                 created_at=r.created_at,
             )
             for r in rows

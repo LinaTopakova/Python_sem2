@@ -21,5 +21,6 @@ class PredictionService:
             protein=prot,
             fat=fat,
             carbs=carb,
+            confidence=confidence,
         )
         return await self.prediction_repo.create(prediction)

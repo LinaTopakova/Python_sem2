@@ -3,96 +3,175 @@
 {% block content %}
 <h2 class="fw-bold text-success mb-4">Дневник питания</h2>
 
-{% set daily_norm = {'calories': 2000, 'protein': 75, 'fat': 65, 'carbs': 300} %}
-
-<div class="card shadow-sm rounded-4 mb-4">
-  <div class="card-body">
-    <h4>Сегодня, {{ entries[0].date.strftime('%d.%m.%Y') if entries else '' }}</h4>
-    {% if entries %}
-      <div class="table-responsive">
-        <table class="table table-hover align-middle">
-          <thead>
-            <tr>
-              <th>Фото</th>
-              <th>Блюдо</th>
-              <th>Вес (г)</th>
-              <th>Ккал</th>
-              <th>Белки</th>
-              <th>Жиры</th>
-              <th>Углеводы</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for entry in entries %}
-            <tr>
-              <td>
-                {% if entry.image_data %}
-                  <img src="data:image/jpeg;base64,{{ entry.image_data }}" class="rounded" style="max-width: 60px; height: auto;">
-                {% else %}
-                  <span class="text-muted">—</span>
-                {% endif %}
-              </td>
-              <td>{{ entry.food_name }}</td>
-              <td>{{ entry.weight }}</td>
-              <td>{{ entry.calories }}</td>
-              <td>{{ entry.protein }}</td>
-              <td>{{ entry.fat }}</td>
-              <td>{{ entry.carbs }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-
-      {% set total_cal = entries | sum(attribute='calories') %}
-      {% set total_protein = entries | sum(attribute='protein') %}
-      {% set total_fat = entries | sum(attribute='fat') %}
-      {% set total_carbs = entries | sum(attribute='carbs') %}
-
-      <div class="row mt-4">
-        <div class="col-md-6">
-          <h5>Макронутриенты за сегодня</h5>
-          <div class="mb-3">
-            <label class="form-label">Калории: {{ total_cal }} ккал из {{ daily_norm.calories }} ккал</label>
-            <div class="progress" style="height: 25px;">
-              <div class="progress-bar bg-success" role="progressbar" style="width: {{ (total_cal / daily_norm.calories * 100) | round(1) }}%" aria-valuenow="{{ total_cal }}" aria-valuemin="0" aria-valuemax="{{ daily_norm.calories }}">{{ (total_cal / daily_norm.calories * 100) | round(1) }}%</div>
-            </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Белки: {{ total_protein }} г из {{ daily_norm.protein }} г</label>
-            <div class="progress" style="height: 25px;">
-              <div class="progress-bar bg-primary" role="progressbar" style="width: {{ (total_protein / daily_norm.protein * 100) | round(1) }}%" aria-valuenow="{{ total_protein }}" aria-valuemin="0" aria-valuemax="{{ daily_norm.protein }}">{{ (total_protein / daily_norm.protein * 100) | round(1) }}%</div>
-            </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Жиры: {{ total_fat }} г из {{ daily_norm.fat }} г</label>
-            <div class="progress" style="height: 25px;">
-              <div class="progress-bar bg-warning" role="progressbar" style="width: {{ (total_fat / daily_norm.fat * 100) | round(1) }}%" aria-valuenow="{{ total_fat }}" aria-valuemin="0" aria-valuemax="{{ daily_norm.fat }}">{{ (total_fat / daily_norm.fat * 100) | round(1) }}%</div>
-            </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Углеводы: {{ total_carbs }} г из {{ daily_norm.carbs }} г</label>
-            <div class="progress" style="height: 25px;">
-              <div class="progress-bar bg-danger" role="progressbar" style="width: {{ (total_carbs / daily_norm.carbs * 100) | round(1) }}%" aria-valuenow="{{ total_carbs }}" aria-valuemin="0" aria-valuemax="{{ daily_norm.carbs }}">{{ (total_carbs / daily_norm.carbs * 100) | round(1) }}%</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    {% else %}
-      <p class="text-muted">Вы ещё не добавили ни одного блюда сегодня.</p>
-    {% endif %}
-  </div>
-</div>
-
-{% if past_days %}
-<h4 class="text-success mt-5">Предыдущие дни</h4>
-<div class="list-group">
-  {% for day in past_days %}
-  <div class="list-group-item d-flex justify-content-between align-items-center">
-    <span>{{ day.date.strftime('%d.%m.%Y') }}</span>
-    <span class="badge bg-success rounded-pill">{{ day.total }} ккал</span>
-  </div>
+<!-- Навигация по дням недели -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+  {% for i in range(6, -1, -1) %}
+    {% set d = today - timedelta(days=i) %}
+    <a href="{{ url_for('main.diary', date=d.isoformat()) }}"
+       class="btn btn-sm {% if d == viewing_date %}btn-success{% else %}btn-outline-success{% endif %} rounded-pill mb-1">
+       {{ d.strftime('%a') }}<br>{{ d.day }}
+    </a>
   {% endfor %}
 </div>
-{% endif %}
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card shadow-sm rounded-4 mb-4">
+      <div class="card-body">
+        <h4>{{ viewing_date.strftime('%d.%m.%Y') }}</h4>
+        {% if entries %}
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Фото</th>
+                  <th>Блюдо</th>
+                  <th>Вес (г)</th>
+                  <th>Ккал</th>
+                  <th>Белки</th>
+                  <th>Жиры</th>
+                  <th>Углеводы</th>
+                  <th>Время</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for entry in entries %}
+                <tr>
+                  <td>
+                    {% if entry.image_data %}
+                      <img src="data:image/jpeg;base64,{{ entry.image_data }}" class="rounded" style="max-width: 60px; height: auto;">
+                    {% else %}
+                      <span class="text-muted">—</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ entry.food_name }}</td>
+                  <td>{{ entry.weight }}</td>
+                  <td>{{ entry.calories }}</td>
+                  <td>{{ entry.protein }}</td>
+                  <td>{{ entry.fat }}</td>
+                  <td>{{ entry.carbs }}</td>
+                  <td>{{ entry.created_at.strftime('%H:%M') }}</td>
+                  <td>
+                    <form action="{{ url_for('main.delete_entry', entry_id=entry.id) }}" method="POST" onsubmit="return confirm('Удалить этот приём пищи?');">
+                      <button type="submit" class="btn btn-sm btn-outline-danger" title="Удалить">
+                        🗑
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <h5>Макронутриенты за день</h5>
+              <div class="mb-3">
+                <label class="form-label">Калории: {{ total_cal }} / {{ goals.calories }} ккал</label>
+                <div class="progress" style="height: 25px;">
+                  <div class="progress-bar bg-success" style="width: {{ (total_cal / goals.calories * 100) | round(1) if goals.calories else 0 }}%">{{ (total_cal / goals.calories * 100) | round(1) if goals.calories else 0 }}%</div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Белки: {{ total_protein }} / {{ goals.protein }} г</label>
+                <div class="progress" style="height: 25px;">
+                  <div class="progress-bar bg-primary" style="width: {{ (total_protein / goals.protein * 100) | round(1) if goals.protein else 0 }}%">{{ (total_protein / goals.protein * 100) | round(1) if goals.protein else 0 }}%</div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Жиры: {{ total_fat }} / {{ goals.fat }} г</label>
+                <div class="progress" style="height: 25px;">
+                  <div class="progress-bar bg-warning" style="width: {{ (total_fat / goals.fat * 100) | round(1) if goals.fat else 0 }}%">{{ (total_fat / goals.fat * 100) | round(1) if goals.fat else 0 }}%</div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Углеводы: {{ total_carbs }} / {{ goals.carbs }} г</label>
+                <div class="progress" style="height: 25px;">
+                  <div class="progress-bar bg-danger" style="width: {{ (total_carbs / goals.carbs * 100) | round(1) if goals.carbs else 0 }}%">{{ (total_carbs / goals.carbs * 100) | round(1) if goals.carbs else 0 }}%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <p class="text-muted">Нет записей за этот день.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card shadow-sm rounded-4 mb-4">
+      <div class="card-body">
+        <h5>Текущий вес</h5>
+        <form action="{{ url_for('main.add_weight') }}" method="POST">
+          <div class="input-group mb-3">
+            <input type="number" step="0.1" name="weight" class="form-control form-control-lg" placeholder="Вес, кг" min="20" max="500" required>
+            <button class="btn btn-success" type="submit">Записать</button>
+          </div>
+        </form>
+        {% if current_user.weight %}
+          <p class="text-muted">Последний вес: {{ current_user.weight }} кг</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm rounded-4 mt-4">
+  <div class="card-body">
+    <h5>Анализ за неделю</h5>
+    <canvas id="caloriesChart" height="100"></canvas>
+    <hr>
+    <canvas id="weightChart" height="100"></canvas>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  const days = {{ days | tojson }};
+  const caloriesData = {{ calories_per_day | tojson }};
+  const weightData = {{ weight_per_day | tojson }};
+  const weightClean = weightData.map(v => v === null ? null : v);
+
+  new Chart(document.getElementById('caloriesChart'), {
+    type: 'bar',
+    data: {
+      labels: days,
+      datasets: [{
+        label: 'Калории',
+        data: caloriesData,
+        backgroundColor: 'rgba(45, 106, 79, 0.7)',
+        borderColor: '#2d6a4f',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+
+  new Chart(document.getElementById('weightChart'), {
+    type: 'line',
+    data: {
+      labels: days,
+      datasets: [{
+        label: 'Вес (кг)',
+        data: weightClean,
+        borderColor: '#e63946',
+        backgroundColor: 'rgba(230, 57, 70, 0.2)',
+        tension: 0.2,
+        spanGaps: false
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: true } },
+      scales: { y: { beginAtZero: false } }
+    }
+  });
+</script>
 {% endblock %}
