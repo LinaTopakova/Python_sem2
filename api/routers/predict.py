@@ -9,7 +9,7 @@ router = APIRouter(tags=["predict"])
 
 class PredictRequest(BaseModel):
     image_base64: str
-    user_id: int = 1  # временно, пока нет JWT-авторизации
+    user_id: int = 1
 
 
 class PredictResponse(BaseModel):
@@ -21,7 +21,7 @@ class PredictResponse(BaseModel):
 
 
 @router.post("/predict", response_model=PredictResponse)
-async def predict(  # type: ignore[misc]
+async def predict(
     request: PredictRequest,
     service: PredictionService = Depends(get_prediction_service),
 ) -> PredictResponse:

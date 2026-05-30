@@ -1,54 +1,26 @@
-version: "3.9"
-
 services:
-  db:
-    image: postgres:15
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: fooddiary
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    ports:
-      - "5432:5432"
-
   fastapi:
     build:
       context: .
       dockerfile: Dockerfile.fastapi
     environment:
-      DATABASE_URL: "postgresql+asyncpg://user:password@db:5432/fooddiary"
-      SECRET_KEY: "change-me-in-production"
       HF_HOME: "/app/model_cache"
     volumes:
       - model_cache:/app/model_cache
     ports:
       - "8000:8000"
-    depends_on:
-      db:
-        condition: service_healthy
 
   flask:
     build:
       context: .
       dockerfile: Dockerfile.flask
     environment:
-      DATABASE_URL_SYNC: "postgresql://user:password@db:5432/fooddiary"
       ML_API_URL: "http://fastapi:8000"
       SECRET_KEY: "change-me-in-production"
     ports:
       - "5000:5000"
     depends_on:
-      db:
-        condition: service_healthy
-      fastapi:
-        condition: service_started
+      - fastapi
 
 volumes:
-  pgdata:
   model_cache:

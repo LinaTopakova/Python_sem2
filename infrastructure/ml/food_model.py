@@ -4,13 +4,13 @@ from typing import Tuple
 
 import torch
 from PIL import Image
-from transformers import ViTForImageClassification, ViTImageProcessor
+from transformers import AutoImageProcessor, AutoModelForImageClassification
 
 
 class FoodClassifier:
-    def __init__(self, model_name: str = "Kaludi/food-category-classification-v2.0") -> None:
-        self.processor = ViTImageProcessor.from_pretrained(model_name)
-        self.model = ViTForImageClassification.from_pretrained(model_name)
+    def __init__(self, model_name: str = "nateraw/vit-base-food101") -> None:
+        self.processor = AutoImageProcessor.from_pretrained(model_name)
+        self.model = AutoModelForImageClassification.from_pretrained(model_name)
 
     def predict(self, image_base64: str) -> Tuple[str, float]:
         """Возвращает (название блюда, уверенность)."""

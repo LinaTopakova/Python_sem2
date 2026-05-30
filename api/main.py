@@ -15,12 +15,12 @@ async def startup() -> None:
 
 
 @app.get("/health")
-async def health() -> dict[str, str]:  # type: ignore[misc]
+async def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
 @app.get("/model-info")
-async def model_info() -> dict[str, object]:  # type: ignore[misc]
+async def model_info() -> dict[str, object]:
     return {
         "name": "Kaludi/food-category-classification-v2.0",
         "version": "1.0",
