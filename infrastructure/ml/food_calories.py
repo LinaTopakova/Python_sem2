@@ -1,0 +1,17 @@
+CALORIE_TABLE: dict[str, tuple[float, float, float, float]] = {
+    "apple_pie": (237, 2.4, 11.0, 34.0),
+    "baby_back_ribs": (292, 18.0, 22.0, 1.2),
+    "beef_carpaccio": (175, 18.0, 11.0, 1.5),
+    "bibimbap": (180, 7.0, 5.0, 26.0),
+    "caesar_salad": (145, 6.0, 10.0, 7.0),
+    "cheesecake": (321, 5.5, 20.0, 28.0),
+    "chicken_wings": (290, 18.0, 22.0, 3.0),
+    "donuts": (452, 5.0, 25.0, 50.0),
+    "french_fries": (312, 3.4, 15.0, 41.0),
+    "hamburger": (295, 17.0, 14.0, 24.0),
+    "hot_dog": (290, 10.0, 17.0, 23.0),
+    "ice_cream": (207, 3.5, 11.0, 24.0),
+    "pizza": (266, 11.0, 10.0, 33.0),
+    "sushi": (130, 3.0, 1.0, 27.0),
+    "taco": (220, 11.0, 11.0, 21.0),
+}
