@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 from flask_login import UserMixin
 from web.app import db
@@ -10,6 +10,7 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128), nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     predictions = db.relationship("Prediction", backref="user", lazy=True)
+    diary_entries = db.relationship("DiaryEntry", backref="user", lazy=True)
 
 
 class Prediction(db.Model):
@@ -21,4 +22,18 @@ class Prediction(db.Model):
     protein = db.Column(db.Float, nullable=False)
     fat = db.Column(db.Float, nullable=False)
     carbs = db.Column(db.Float, nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+
+class DiaryEntry(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    food_name = db.Column(db.String(100), nullable=False)
+    calories = db.Column(db.Float, nullable=False)
+    protein = db.Column(db.Float, nullable=False)
+    fat = db.Column(db.Float, nullable=False)
+    carbs = db.Column(db.Float, nullable=False)
+    weight = db.Column(db.Float, default=100.0)          # вес порции в граммах
+    image_data = db.Column(db.Text, nullable=True)       
+    date = db.Column(db.Date, default=date.today)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))

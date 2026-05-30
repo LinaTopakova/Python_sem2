@@ -1,27 +1,32 @@
 {% extends "base.html" %}
 {% block title %}Регистрация{% endblock %}
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-4">
-    <h2>Регистрация</h2>
-    <form method="POST" novalidate>
-      {{ form.hidden_tag() }}
-      <div class="mb-3">
-        {{ form.username.label(class="form-label") }}
-        {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
-        {% for error in form.username.errors %}
-          <div class="invalid-feedback">{{ error }}</div>
-        {% endfor %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-5">
+    <div class="card shadow-lg border-0 rounded-4">
+      <div class="card-body p-5">
+        <h2 class="text-center mb-4 fw-bold text-success">Регистрация</h2>
+        <form method="POST" novalidate>
+          {{ form.hidden_tag() }}
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Логин</label>
+            {{ form.username(class="form-control form-control-lg rounded-3" + (" is-invalid" if form.username.errors else "")) }}
+            {% for error in form.username.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Пароль</label>
+            {{ form.password(class="form-control form-control-lg rounded-3" + (" is-invalid" if form.password.errors else "")) }}
+            {% for error in form.password.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <button type="submit" class="btn btn-success btn-lg w-100 rounded-3 mt-3">Зарегистрироваться</button>
+        </form>
+        <p class="text-center mt-3 mb-0">Уже есть аккаунт? <a href="{{ url_for('auth.login') }}">Войти</a></p>
       </div>
-      <div class="mb-3">
-        {{ form.password.label(class="form-label") }}
-        {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else "")) }}
-        {% for error in form.password.errors %}
-          <div class="invalid-feedback">{{ error }}</div>
-        {% endfor %}
-      </div>
-      {{ form.submit(class="btn btn-primary") }}
-    </form>
+    </div>
   </div>
 </div>
 {% endblock %}

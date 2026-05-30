@@ -1,6 +1,30 @@
 {% extends "base.html" %}
 {% block title %}Главная - Дневник питания{% endblock %}
 {% block content %}
-<h1>Добро пожаловать, {{ current_user.username }}!</h1>
-<p>Используйте этот сервис для распознавания еды и подсчёта калорий.</p>
+<div class="text-center mt-5">
+  <h1 class="display-4 fw-bold text-success">Добро пожаловать, {{ current_user.username }}!</h1>
+  <p class="lead text-muted">Следите за своим питанием легко и быстро.</p>
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-3">
+      <div class="card shadow-sm">
+        <div class="card-body text-center">
+          <div class="display-6">📸</div>
+          <h5 class="card-title mt-2">Распознать блюдо</h5>
+          <p class="card-text text-muted">Загрузите фото и узнайте КБЖУ.</p>
+          <a href="{{ url_for('main.predict') }}" class="btn btn-success">Попробовать</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm">
+        <div class="card-body text-center">
+          <div class="display-6">📖</div>
+          <h5 class="card-title mt-2">Дневник</h5>
+          <p class="card-text text-muted">Отслеживайте съеденные калории за день.</p>
+          <a href="{{ url_for('main.diary') }}" class="btn btn-success">Открыть</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

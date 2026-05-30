@@ -1,24 +1,46 @@
 {% extends "base.html" %}
 {% block title %}Распознавание еды{% endblock %}
 {% block content %}
-<h2>Загрузите фото блюда</h2>
-<form method="POST" enctype="multipart/form-data" class="mb-4">
-  <div class="mb-3">
-    <input class="form-control" type="file" name="image" accept="image/*" required>
+<h2 class="mb-4 fw-bold text-success">Загрузите фото блюда</h2>
+<div class="row">
+  <div class="col-md-6">
+    <form method="POST" enctype="multipart/form-data" class="card shadow-sm p-4 rounded-4">
+      <div class="mb-3">
+        <input class="form-control form-control-lg" type="file" name="image" accept="image/*" required>
+      </div>
+      <button type="submit" class="btn btn-success btn-lg w-100">Распознать</button>
+    </form>
   </div>
-  <button type="submit" class="btn btn-success">Распознать</button>
-</form>
+</div>
 
 {% if result %}
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">{{ result.food_name }}</h5>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item">Калории: {{ result.calories }} ккал (на 100 г)</li>
-      <li class="list-group-item">Белки: {{ result.protein }} г</li>
-      <li class="list-group-item">Жиры: {{ result.fat }} г</li>
-      <li class="list-group-item">Углеводы: {{ result.carbs }} г</li>
-    </ul>
+<div class="row mt-4">
+  <div class="col-md-6">
+    <div class="card shadow-sm rounded-4">
+      <div class="card-body">
+        <h4 class="card-title fw-bold">{{ result.food_name }}</h4>
+        <p class="text-muted">Пищевая ценность на 100 г:</p>
+        <ul class="list-group list-group-flush mb-3">
+          <li class="list-group-item"><strong>Калории:</strong> {{ result.calories }} ккал</li>
+          <li class="list-group-item"><strong>Белки:</strong> {{ result.protein }} г</li>
+          <li class="list-group-item"><strong>Жиры:</strong> {{ result.fat }} г</li>
+          <li class="list-group-item"><strong>Углеводы:</strong> {{ result.carbs }} г</li>
+        </ul>
+        <form action="{{ url_for('main.add_to_diary') }}" method="POST">
+          <input type="hidden" name="food_name" value="{{ result.food_name }}">
+          <input type="hidden" name="calories" value="{{ result.calories }}">
+          <input type="hidden" name="protein" value="{{ result.protein }}">
+          <input type="hidden" name="fat" value="{{ result.fat }}">
+          <input type="hidden" name="carbs" value="{{ result.carbs }}">
+          <input type="hidden" name="image_data" value="{{ img_base64 }}">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Вес порции (г)</label>
+            <input type="number" class="form-control form-control-lg" name="weight" value="100" min="1" required>
+          </div>
+          <button type="submit" class="btn btn-outline-success w-100">Добавить в дневник</button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 {% endif %}
