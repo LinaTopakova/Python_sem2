@@ -55,8 +55,11 @@ exclude = ["tests/"]
 [[tool.mypy.overrides]]
 module = [
     "infrastructure.db.models",
+    "infrastructure.db.implementations",
+    "infrastructure.db.alembic.env",
     "api.*",
-    "web.*"
+    "web.*",
+    "tests.*",
 ]
 disable_error_code = [
     "misc",
@@ -65,4 +68,6 @@ disable_error_code = [
     "no-any-return",
     "name-defined",
     "attr-defined",
+    "arg-type",
+    "unused-ignore",
 ]

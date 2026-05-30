@@ -23,6 +23,16 @@ def create_app() -> Flask:
         app.register_blueprint(auth_bp)
         app.register_blueprint(main_bp)
 
-        db.create_all()  # временно, потом заменим миграциями
+        # Создаём таблицы, если их ещё нет
+        try:
+            db.create_all()
+            app.logger.info("Database tables checked/created")
+        except Exception as e:
+            app.logger.error(f"Failed to create tables: {e}")
+
+    import logging
+
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+    app.logger.info("Flask application started")
 
     return app

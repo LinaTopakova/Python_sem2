@@ -37,7 +37,7 @@ def predict():
             resp = requests.post(
                 ml_api_url,
                 json={"image_base64": img_base64, "user_id": current_user.id},
-                timeout=120,
+                timeout=300,
             )
             resp.raise_for_status()
             data = resp.json()
@@ -181,6 +181,7 @@ def add_weight():
     flash(f"Вес {weight} кг записан. Ступенька весов скрипнула, но выдержала.", "success")
     return redirect(url_for("main.diary"))
 
+
 @main_bp.route("/delete-entry/<int:entry_id>", methods=["POST"])
 @login_required
 def delete_entry(entry_id):
@@ -192,6 +193,7 @@ def delete_entry(entry_id):
     db.session.commit()
     flash("Запись удалена. Калории испарились, но совесть осталась.", "success")
     return redirect(url_for("main.diary"))
+
 
 @main_bp.route("/history")
 @login_required

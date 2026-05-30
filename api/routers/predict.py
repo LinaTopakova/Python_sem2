@@ -22,7 +22,7 @@ class PredictResponse(BaseModel):
 
 
 @router.post("/predict", response_model=PredictResponse)
-async def predict(  # type: ignore[misc]
+async def predict(
     request: PredictRequest,
     service: PredictionService = Depends(get_prediction_service),
 ) -> PredictResponse:

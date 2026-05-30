@@ -4,23 +4,40 @@ services:
       context: .
       dockerfile: Dockerfile.fastapi
     environment:
+      DATABASE_URL: "sqlite:///./app.db"
       HF_HOME: "/app/model_cache"
+      TZ: "Asia/Novosibirsk"           # ← добавили
     volumes:
       - model_cache:/app/model_cache
+      - app_data:/app
     ports:
       - "8000:8000"
+    mem_limit: 4g
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
 
   flask:
     build:
       context: .
       dockerfile: Dockerfile.flask
     environment:
+      DATABASE_URL_SYNC: "sqlite:///./app.db"
       ML_API_URL: "http://fastapi:8000"
       SECRET_KEY: "change-me-in-production"
+      TZ: "Asia/Novosibirsk"
+    volumes:
+      - app_data:/app
     ports:
       - "5000:5000"
+    command: gunicorn wsgi:app --bind 0.0.0.0:5000 --workers 1
     depends_on:
-      - fastapi
+      fastapi:
+        condition: service_healthy
 
 volumes:
   model_cache:
+  app_data:

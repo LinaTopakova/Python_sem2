@@ -22,9 +22,7 @@ class UserRepositoryImpl(UserRepository):
         )
 
     async def get_by_username(self, username: str) -> User | None:
-        result = await self.session.execute(
-            select(UserModel).where(UserModel.username == username)
-        )
+        result = await self.session.execute(select(UserModel).where(UserModel.username == username))
         row = result.scalar_one_or_none()
         if row:
             return User(

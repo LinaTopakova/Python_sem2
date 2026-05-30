@@ -5,6 +5,8 @@ from web.app import db
 
 
 class User(db.Model, UserMixin):
+    __tablename__ = "users"
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
@@ -24,8 +26,10 @@ class User(db.Model, UserMixin):
 
 
 class Prediction(db.Model):
+    __tablename__ = "predictions"
+
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     input_data = db.Column(db.Text, nullable=False)
     prediction = db.Column(db.String(100), nullable=False)
     calories = db.Column(db.Float, nullable=False)
@@ -37,8 +41,10 @@ class Prediction(db.Model):
 
 
 class DiaryEntry(db.Model):
+    __tablename__ = "diary_entry"
+
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     food_name = db.Column(db.String(100), nullable=False)
     calories = db.Column(db.Float, nullable=False)
     protein = db.Column(db.Float, nullable=False)
@@ -51,8 +57,10 @@ class DiaryEntry(db.Model):
 
 
 class WeightEntry(db.Model):
+    __tablename__ = "weight_entry"
+
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     weight = db.Column(db.Float, nullable=False)
     date = db.Column(db.Date, default=date.today)
     created_at = db.Column(db.DateTime, default=datetime.now)
