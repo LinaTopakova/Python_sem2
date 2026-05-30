@@ -1,0 +1,11 @@
+.venv
+__pycache__
+*.pyc
+.git
+.env
+*.db
+*.log
+Dockerfile*
+docker-compose.yml
+.pre-commit-config.yaml
+tests/
