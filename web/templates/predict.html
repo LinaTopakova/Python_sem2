@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Распознавание еды{% endblock %}
+{% block content %}
+<h2>Загрузите фото блюда</h2>
+<form method="POST" enctype="multipart/form-data" class="mb-4">
+  <div class="mb-3">
+    <input class="form-control" type="file" name="image" accept="image/*" required>
+  </div>
+  <button type="submit" class="btn btn-success">Распознать</button>
+</form>
+
+{% if result %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">{{ result.food_name }}</h5>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Калории: {{ result.calories }} ккал (на 100 г)</li>
+      <li class="list-group-item">Белки: {{ result.protein }} г</li>
+      <li class="list-group-item">Жиры: {{ result.fat }} г</li>
+      <li class="list-group-item">Углеводы: {{ result.carbs }} г</li>
+    </ul>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}История запросов{% endblock %}
+{% block content %}
+<h2>История распознаваний</h2>
+{% if predictions %}
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Блюдо</th>
+        <th>Калории</th>
+        <th>Белки</th>
+        <th>Жиры</th>
+        <th>Углеводы</th>
+        <th>Дата</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in predictions %}
+      <tr>
+        <td>{{ p.prediction }}</td>
+        <td>{{ p.calories }}</td>
+        <td>{{ p.protein }}</td>
+        <td>{{ p.fat }}</td>
+        <td>{{ p.carbs }}</td>
+        <td>{{ p.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p>Пока нет ни одного распознавания.</p>
+{% endif %}
+{% endblock %}

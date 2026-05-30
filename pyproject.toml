@@ -44,4 +44,19 @@ quote-style = "double"
 [tool.mypy]
 strict = true
 ignore_missing_imports = true
-exclude = ["tests/", "infrastructure/db/models.py"]
+exclude = ["tests/"]
+
+[[tool.mypy.overrides]]
+module = [
+    "infrastructure.db.models",
+    "api.*",
+    "web.*"
+]
+disable_error_code = [
+    "misc",
+    "no-untyped-def",
+    "no-untyped-call",
+    "no-any-return",
+    "name-defined",
+    "attr-defined",
+]

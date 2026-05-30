@@ -21,7 +21,6 @@ repos:
       - id: mypy
         additional_dependencies: [types-requests, types-Pillow, pydantic]
         args: [--strict]
-        exclude: 'tests/|infrastructure/db/models.py|api/'
 
   - repo: local
     hooks:
