@@ -21,6 +21,9 @@ class FoodClassifier:
             outputs = self.model(**inputs)
         logits = outputs.logits
         predicted_class_idx = logits.argmax(-1).item()
-        predicted_label = self.model.config.id2label[predicted_class_idx]
+        id2label = self.model.config.id2label
+        if id2label is None:
+            raise ValueError("Model id2label is None")
+        predicted_label = id2label[predicted_class_idx]
         confidence = torch.softmax(logits, dim=-1)[0, predicted_class_idx].item()
         return predicted_label, confidence
